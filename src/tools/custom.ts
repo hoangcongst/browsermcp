@@ -1,19 +1,7 @@
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { z } from "zod";
-
 import { GetConsoleLogsTool, ScreenshotTool } from "../types";
-
 import { Tool } from "./tool";
-
-const ExecuteJavaScriptTool = z.object({
-  name: z.literal("execute_javascript"),
-  description: z.literal(
-    "Executes a JavaScript snippet in the browser console and returns the output.",
-  ),
-  arguments: z.object({
-    script: z.string().describe("The JavaScript code to execute."),
-  }),
-});
 
 const GetInnerHTMLTool = z.object({
   name: z.literal("get_inner_html"),
@@ -55,7 +43,7 @@ export const screenshot: Tool = {
   },
   handle: async (context, _params) => {
     const screenshot = await context.sendSocketMessage(
-      "browser_screenshot",
+      "capture_screenshot",
       {},
     );
     return {
@@ -66,23 +54,6 @@ export const screenshot: Tool = {
           mimeType: "image/png",
         },
       ],
-    };
-  },
-};
-
-export const executeJavaScript: Tool = {
-  schema: {
-    name: ExecuteJavaScriptTool.shape.name.value,
-    description: ExecuteJavaScriptTool.shape.description.value,
-    inputSchema: zodToJsonSchema(ExecuteJavaScriptTool.shape.arguments),
-  },
-  handle: async (context, params) => {
-    const { script } = ExecuteJavaScriptTool.shape.arguments.parse(params);
-    const result = await context.sendSocketMessage("browser_execute_js", {
-      script,
-    });
-    return {
-      content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
     };
   },
 };

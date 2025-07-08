@@ -24,7 +24,6 @@ const commonTools: Tool[] = [common.pressKey, common.wait];
 const customTools: Tool[] = [
   custom.getConsoleLogs,
   custom.screenshot,
-  custom.executeJavaScript,
   custom.getInnerHTML,
 ];
 

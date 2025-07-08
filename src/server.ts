@@ -53,6 +53,26 @@ export async function createServerWithTools(options: Options): Promise<Server> {
     // Store the connection in context
     context.ws = websocket;
     console.log('[Chrome MCP] WebSocket connection established successfully');
+    
+    // Handle incoming messages
+    websocket.on('message', (data) => {
+      try {
+        const message = JSON.parse(data.toString());
+        console.log(`[Chrome MCP] Received message: ${JSON.stringify(message)}`);
+        
+        // Process responses from the extension
+        if (message.type && message.type.endsWith('_complete')) {
+          console.log(`[Chrome MCP] Action completed: ${message.type}`);
+          // The message ID should be used to resolve the corresponding promise in the sender
+        } else if (message.type === 'heartbeat_ack') {
+          console.log('[Chrome MCP] Received heartbeat acknowledgment');
+        } else if (message.type === 'error') {
+          console.error(`[Chrome MCP] Error from extension: ${JSON.stringify(message.data)}`);
+        }
+      } catch (error) {
+        console.error(`[Chrome MCP] Error parsing message: ${error}`);
+      }
+    });
   });
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {

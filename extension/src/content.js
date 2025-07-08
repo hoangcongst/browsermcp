@@ -5,7 +5,7 @@
  * browser automation commands from AI applications.
  */
 
-class chromemcpClient {
+class WsClient {
   constructor() {
     this.ws = null;
     this.isConnected = false;
@@ -41,17 +41,6 @@ class chromemcpClient {
         console.log('[Chrome MCP] Connected to MCP server');
         this.isConnected = true;
         this.reconnectAttempts = 0;
-        
-        // Send initial connection message
-        this.sendMessage({
-          type: 'connection',
-          data: {
-            url: window.location.href,
-            title: document.title,
-            userAgent: navigator.userAgent,
-            clientName: 'chromemcp' // Add client identifier
-          }
-        });
       };
       
       this.ws.onmessage = (event) => {
@@ -86,7 +75,7 @@ class chromemcpClient {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = null;
     }
-    
+    console.log(this.reconnectAttempts);
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
       // Exponential backoff with jitter to prevent connection storms
@@ -101,13 +90,9 @@ class chromemcpClient {
         this.connectToServer();
       }, delay);
     } else {
-      console.error('[Chrome MCP] Max reconnect attempts reached. Please check if the MCP server is running.');
-      // Reset reconnect attempts after a longer timeout to try again
-      setTimeout(() => {
-        console.log('[Chrome MCP] Resetting reconnection attempts and trying again...');
-        this.reconnectAttempts = 0;
-        this.connectToServer();
-      }, 30000); // Wait 30 seconds before trying again
+      console.error('[Chrome MCP] Max reconnect attempts reached. Stopping further attempts.');
+      // Optionally: notify the user/UI here
+      // No further reconnects will be attempted unless triggered manually.
     }
   }
 
@@ -127,45 +112,50 @@ class chromemcpClient {
     
     try {
       switch (type) {
-        case 'chromemcp_navigate':
-          await this.handleNavigate(data);
+        case 'browser_navigate':
+          await this.handleNavigate(data, id);
           break;
-        case 'chromemcp_click':
-          await this.handleClick(data);
+        case 'browser_click':
+          await this.handleClick(data, id);
           break;
-        case 'chromemcp_type':
-          await this.handleType(data);
+        case 'browser_type':
+          await this.handleType(data, id);
           break;
-        case 'chromemcp_hover':
         case 'browser_hover':
-          await this.handleHover(data);
+          await this.handleHover(data, id);
           break;
         case 'browser_select_option':
-          await this.handleSelectOption(data);
+          await this.handleSelectOption(data, id);
           break;
         case 'browser_press_key':
-          await this.handlePressKey(data);
+          await this.handlePressKey(data, id);
           break;
         case 'browser_go_back':
-          await this.handleGoBack();
+          await this.handleGoBack(id);
           break;
         case 'browser_go_forward':
-          await this.handleGoForward();
+          await this.handleGoForward(id);
           break;
         case 'capture_screenshot':
-          await this.handleScreenshot();
+          await this.handleScreenshot(id);
           break;
         case 'capture_snapshot':
-          await this.handleSnapshot();
+          await this.handleSnapshot(id);
+          break;
+        case 'getUrl':
+          this.sendMessage({ id, type: 'getUrl_complete', data: { url: window.location.href } });
+          break;
+        case 'getTitle':
+          this.sendMessage({ id, type: 'getTitle_complete', data: { title: document.title } });
           break;
         case 'get_console_logs':
-          await this.handleGetConsoleLogs();
-          break;
-        case 'browser_execute_js':
-          await this.handleExecuteJavaScript(data, id);
+          await this.handleGetConsoleLogs(id);
           break;
         case 'browser_get_inner_html':
           await this.handleGetInnerHTML(data, id);
+          break;
+        case 'browser_wait':
+          await this.handleWait(data, id);
           break;
         default:
           console.warn('[Chrome MCP] Unknown message type:', message.type);
@@ -223,25 +213,32 @@ class chromemcpClient {
   }
 
   // Browser action handlers
-  async handleNavigate(data) {
+  async handleNavigate(data, messageId) {
     const { url } = data;
     window.location.href = url;
-    this.sendMessage({ type: 'navigate_complete', data: { url } });
+    this.sendMessage({ id: messageId, type: 'navigate_complete', data: { url } });
   }
 
-  async handleClick(data) {
+  async handleClick(data, messageId) {
     const { selector, ref } = data;
     const element = this.findElement(selector, ref);
     
     if (element) {
       element.click();
-      this.sendMessage({ type: 'click_complete', data: { selector, ref } });
+      this.sendMessage({ id: messageId, type: 'click_complete', data: { selector, ref } });
     } else {
       throw new Error(`Element not found: ${selector || ref}`);
     }
   }
 
-  async handleType(data) {
+  async handleWait(data, messageId) {
+    const { time } = data;
+    console.log(`[Chrome MCP] Waiting for ${time} seconds`);
+    await new Promise(resolve => setTimeout(resolve, time * 1000));
+    this.sendMessage({ id: messageId, type: 'wait_complete', data: { time } });
+  }
+
+  async handleType(data, messageId) {
     const { selector, ref, text, submit } = data;
     const element = this.findElement(selector, ref);
     
@@ -257,25 +254,25 @@ class chromemcpClient {
         element.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
       }
       
-      this.sendMessage({ type: 'type_complete', data: { selector, ref, text } });
+      this.sendMessage({ id: messageId, type: 'type_complete', data: { selector, ref, text } });
     } else {
       throw new Error(`Element not found: ${selector || ref}`);
     }
   }
 
-  async handleHover(data) {
+  async handleHover(data, messageId) {
     const { selector, ref } = data;
     const element = this.findElement(selector, ref);
     
     if (element) {
       element.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
-      this.sendMessage({ type: 'hover_complete', data: { selector, ref } });
+      this.sendMessage({ id: messageId, type: 'hover_complete', data: { selector, ref } });
     } else {
       throw new Error(`Element not found: ${selector || ref}`);
     }
   }
 
-  async handleSelectOption(data) {
+  async handleSelectOption(data, messageId) {
     const { selector, ref, values } = data;
     const element = this.findElement(selector, ref);
     
@@ -288,45 +285,46 @@ class chromemcpClient {
       });
       
       element.dispatchEvent(new Event('change', { bubbles: true }));
-      this.sendMessage({ type: 'select_complete', data: { selector, ref, values } });
+      this.sendMessage({ id: messageId, type: 'select_complete', data: { selector, ref, values } });
     } else {
       throw new Error(`Select element not found: ${selector || ref}`);
     }
   }
 
-  async handlePressKey(data) {
+  async handlePressKey(data, messageId) {
     const { key } = data;
     document.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
-    this.sendMessage({ type: 'key_press_complete', data: { key } });
+    this.sendMessage({ id: messageId, type: 'key_press_complete', data: { key } });
   }
 
-  async handleGoBack() {
+  async handleGoBack(messageId) {
     window.history.back();
-    this.sendMessage({ type: 'go_back_complete' });
+    this.sendMessage({ id: messageId, type: 'go_back_complete' });
   }
 
-  async handleGoForward() {
+  async handleGoForward(messageId) {
     window.history.forward();
-    this.sendMessage({ type: 'go_forward_complete' });
+    this.sendMessage({ id: messageId, type: 'go_forward_complete' });
   }
 
-  async handleScreenshot() {
+  async handleScreenshot(messageId) {
     // For screenshots, we need to use the background script
     // Send a message to background script to capture screenshot
-    this.sendMessage({ type: 'screenshot_request' });
+    this.sendMessage({ id: messageId, type: 'screenshot_request' });
   }
 
-  async handleSnapshot() {
+  async handleSnapshot(messageId) {
     const snapshot = this.captureARIASnapshot();
     this.sendMessage({ 
+      id: messageId,
       type: 'snapshot_complete', 
       data: { snapshot } 
     });
   }
 
-  async handleGetConsoleLogs() {
+  async handleGetConsoleLogs(messageId) {
     // Console logs are captured by background script
-    this.sendMessage({ type: 'console_logs_request' });
+    this.sendMessage({ id: messageId, type: 'console_logs_request' });
   }
 
   // Utility methods
@@ -417,36 +415,6 @@ class chromemcpClient {
            style.opacity !== '0';
   }
 
-  async handleExecuteJavaScript(data, messageId) {
-    try {
-      const { script } = data;
-      console.log('[Chrome MCP] Executing JavaScript:', script);
-      
-      // Execute the script in the page context and get the result
-      const result = eval(script);
-      
-      // Handle promises if the script returns one
-      const finalResult = result instanceof Promise ? await result : result;
-      
-      // Send the result back with the original message ID
-      this.sendMessage({
-        id: messageId,
-        type: 'browser_execute_js_complete',
-        data: finalResult
-      });
-    } catch (error) {
-      console.error('[Chrome MCP] Error executing JavaScript:', error);
-      this.sendMessage({
-        id: messageId,
-        type: 'browser_execute_js_error',
-        data: {
-          message: error.message,
-          stack: error.stack
-        }
-      });
-    }
-  }
-
   async handleGetInnerHTML(data, messageId) {
     try {
       const { selector, getAll = false, getTextContent = false } = data;
@@ -507,9 +475,9 @@ class chromemcpClient {
 }
 
 // Initialize the Chrome MCP client
-const chromemcp = new chromemcpClient();
+const wsClient = new WsClient();
 
 // Export for testing
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = chromemcpClient;
+  module.exports = wsClient;
 }

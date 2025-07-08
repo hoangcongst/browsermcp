@@ -19,7 +19,7 @@ export const createSocketMessageSender = (ws: WebSocket) => {
         try {
           const response = JSON.parse(rawData.toString());
           
-          // Check if this is the response to our message
+          // Check if this is the response to our message by ID
           if (response.id === id) {
             // Clean up
             clearTimeout(timeoutId);
@@ -33,6 +33,7 @@ export const createSocketMessageSender = (ws: WebSocket) => {
             } else {
               resolve(response.data);
             }
+            return;
           }
         } catch (error) {
           console.warn(`[Chrome MCP] Failed to parse WebSocket message: ${error}`);
