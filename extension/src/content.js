@@ -1,5 +1,5 @@
 /**
- * Browser MCP Extension - Content Script
+ * Chrome MCP Extension - Content Script
  * 
  * This content script connects to the MCP server via WebSocket and handles
  * browser automation commands from AI applications.
@@ -17,7 +17,7 @@ class BrowserMCPClient {
   }
 
   async init() {
-    console.log('[Browser MCP] Initializing content script');
+    console.log('[Chrome MCP] Initializing content script');
     await this.connectToServer();
     this.setupMessageHandlers();
   }
@@ -26,12 +26,12 @@ class BrowserMCPClient {
     try {
       // Try to connect to the MCP server WebSocket (using default port from config)
       const wsUrl = 'ws://localhost:8080';
-      console.log(`[Browser MCP] Connecting to ${wsUrl}`);
+      console.log(`[Chrome MCP] Connecting to ${wsUrl}`);
       
       this.ws = new WebSocket(wsUrl);
       
       this.ws.onopen = () => {
-        console.log('[Browser MCP] Connected to MCP server');
+        console.log('[Chrome MCP] Connected to MCP server');
         this.isConnected = true;
         this.reconnectAttempts = 0;
         
@@ -51,17 +51,17 @@ class BrowserMCPClient {
       };
       
       this.ws.onclose = () => {
-        console.log('[Browser MCP] Connection closed');
+        console.log('[Chrome MCP] Connection closed');
         this.isConnected = false;
         this.attemptReconnect();
       };
       
       this.ws.onerror = (error) => {
-        console.error('[Browser MCP] WebSocket error:', error);
+        console.error('[Chrome MCP] WebSocket error:', error);
       };
       
     } catch (error) {
-      console.error('[Browser MCP] Failed to connect:', error);
+      console.error('[Chrome MCP] Failed to connect:', error);
       this.attemptReconnect();
     }
   }
@@ -69,13 +69,13 @@ class BrowserMCPClient {
   attemptReconnect() {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
-      console.log(`[Browser MCP] Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+      console.log(`[Chrome MCP] Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
       
       setTimeout(() => {
         this.connectToServer();
       }, this.reconnectDelay * this.reconnectAttempts);
     } else {
-      console.error('[Browser MCP] Max reconnection attempts reached');
+      console.error('[Chrome MCP] Max reconnection attempts reached');
     }
   }
 
@@ -83,27 +83,28 @@ class BrowserMCPClient {
     if (this.ws && this.isConnected) {
       this.ws.send(JSON.stringify(message));
     } else {
-      console.warn('[Browser MCP] Cannot send message - not connected');
+      console.warn('[Chrome MCP] Cannot send message - not connected');
     }
   }
 
   async handleMessage(message) {
-    console.log('[Browser MCP] Received message:', message);
+    console.log('[Chrome MCP] Received message:', message);
     
     // Extract the message ID which needs to be included in the response
     const { id, type, data } = message;
     
     try {
       switch (type) {
-        case 'browser_navigate':
+        case 'chromemcp_navigate':
           await this.handleNavigate(data);
           break;
-        case 'browser_click':
+        case 'chromemcp_click':
           await this.handleClick(data);
           break;
-        case 'browser_type':
+        case 'chromemcp_type':
           await this.handleType(data);
           break;
+        case 'chromemcp_hover':
         case 'browser_hover':
           await this.handleHover(data);
           break;
@@ -135,10 +136,10 @@ class BrowserMCPClient {
           await this.handleGetInnerHTML(data, id);
           break;
         default:
-          console.warn('[Browser MCP] Unknown message type:', message.type);
+          console.warn('[Chrome MCP] Unknown message type:', message.type);
       }
     } catch (error) {
-      console.error('[Browser MCP] Error handling message:', error);
+      console.error('[Chrome MCP] Error handling message:', error);
       this.sendMessage({
         type: 'error',
         data: {
@@ -387,7 +388,7 @@ class BrowserMCPClient {
   async handleExecuteJavaScript(data, messageId) {
     try {
       const { script } = data;
-      console.log('[Browser MCP] Executing JavaScript:', script);
+      console.log('[Chrome MCP] Executing JavaScript:', script);
       
       // Execute the script in the page context and get the result
       const result = eval(script);
@@ -402,7 +403,7 @@ class BrowserMCPClient {
         data: finalResult
       });
     } catch (error) {
-      console.error('[Browser MCP] Error executing JavaScript:', error);
+      console.error('[Chrome MCP] Error executing JavaScript:', error);
       this.sendMessage({
         id: messageId,
         type: 'browser_execute_js_error',
@@ -417,7 +418,7 @@ class BrowserMCPClient {
   async handleGetInnerHTML(data, messageId) {
     try {
       const { selector, getAll = false, getTextContent = false } = data;
-      console.log('[Browser MCP] Getting content for selector:', selector, 
+      console.log('[Chrome MCP] Getting content for selector:', selector, 
                  `(getAll: ${getAll}, getTextContent: ${getTextContent})`);
       
       let result;
@@ -434,7 +435,7 @@ class BrowserMCPClient {
           return getTextContent ? el.textContent : el.innerHTML;
         });
         
-        console.log(`[Browser MCP] Found ${result.length} elements matching selector`);
+        console.log(`[Chrome MCP] Found ${result.length} elements matching selector`);
       } else {
         // Get just the first element
         const element = document.querySelector(selector);
@@ -443,7 +444,7 @@ class BrowserMCPClient {
         }
         
         result = getTextContent ? element.textContent : element.innerHTML;
-        console.log('[Browser MCP] Content:', result);
+        console.log('[Chrome MCP] Content:', result);
       }
       
       this.sendMessage({
@@ -457,7 +458,7 @@ class BrowserMCPClient {
         }
       });
     } catch (error) {
-      console.error('[Browser MCP] Error getting content:', error);
+      console.error('[Chrome MCP] Error getting content:', error);
       this.sendMessage({
         id: messageId,
         type: 'browser_get_inner_html_error',
@@ -473,7 +474,7 @@ class BrowserMCPClient {
   }
 }
 
-// Initialize the Browser MCP client
+// Initialize the Chrome MCP client
 const browserMCP = new BrowserMCPClient();
 
 // Export for testing

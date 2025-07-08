@@ -1,13 +1,13 @@
 {
-  "name": "@hoangcongst/browsermcp",
+  "name": "@hoangcongst/chromemcp",
   "version": "0.1.3",
-  "description": "MCP server for browser automation using Browser MCP (Forked)",
+  "description": "MCP server for browser automation using Chrome MCP (Independent project)",
   "author": "hoangcongst",
-  "homepage": "https://github.com/hoangcongst/browsermcp",
+  "homepage": "https://github.com/hoangcongst/browsermcp", 
   "repository": {
     "type": "git",
     "url": "https://github.com/hoangcongst/browsermcp.git"
-  },
+  }, 
   "bugs": "https://github.com/hoangcongst/browsermcp/issues",
   "keywords": [
     "mcp",
@@ -19,7 +19,7 @@
   ],
   "type": "module",
   "bin": {
-    "mcp-server-browsermcp": "dist/index.js"
+    "mcp-server-chromemcp": "dist/index.js"
   },
   "files": [
     "dist"

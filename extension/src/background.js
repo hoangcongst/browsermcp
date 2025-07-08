@@ -1,5 +1,5 @@
 /**
- * Browser MCP Extension - Background Script
+ * Chrome MCP Extension - Background Script
  * 
  * Handles screenshot capture, console log collection, and communication
  * between content scripts and the MCP server.
@@ -12,7 +12,7 @@ class BackgroundService {
   }
 
   init() {
-    console.log('[Browser MCP Background] Initializing background service');
+    console.log('[Chrome MCP Background] Initializing background service');
     this.setupMessageHandlers();
     this.setupConsoleLogCapture();
   }
@@ -42,10 +42,10 @@ class BackgroundService {
           await this.handleConsoleLogsRequest(sendResponse);
           break;
         default:
-          console.warn('[Browser MCP Background] Unknown message type:', message.type);
+          console.warn('[Chrome MCP Background] Unknown message type:', message.type);
       }
     } catch (error) {
-      console.error('[Browser MCP Background] Error handling message:', error);
+      console.error('[Chrome MCP Background] Error handling message:', error);
       sendResponse({ error: error.message });
     }
   }
@@ -62,7 +62,7 @@ class BackgroundService {
         data: { screenshot: dataUrl }
       });
     } catch (error) {
-      console.error('[Browser MCP Background] Screenshot capture failed:', error);
+      console.error('[Chrome MCP Background] Screenshot capture failed:', error);
       sendResponse({ error: 'Screenshot capture failed: ' + error.message });
     }
   }
@@ -97,7 +97,7 @@ class BackgroundService {
         });
       } catch (error) {
         // Debugger attachment might fail, that's okay
-        console.log('[Browser MCP Background] Could not attach debugger:', error.message);
+        console.log('[Chrome MCP Background] Could not attach debugger:', error.message);
       }
     });
   }
@@ -108,15 +108,15 @@ const backgroundService = new BackgroundService();
 
 // Handle extension installation
 chrome.runtime.onInstalled.addListener((details) => {
-  console.log('[Browser MCP Background] Extension installed/updated:', details.reason);
+  console.log('[Chrome MCP Background] Extension installed/updated:', details.reason);
   
   if (details.reason === 'install') {
     // Show welcome notification or open options page
     chrome.notifications.create({
       type: 'basic',
       iconUrl: 'icons/icon48.png',
-      title: 'Browser MCP Installed',
-      message: 'Browser MCP is ready to automate your browser with AI!'
+      title: 'Chrome MCP Installed',
+      message: 'Chrome MCP is ready to automate your chromemcp with AI!'
     });
   }
 });

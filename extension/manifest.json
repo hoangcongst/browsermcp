@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Browser MCP",
+  "name": "Chrome MCP",
   "version": "0.1.3",
-  "description": "Browser extension for AI-driven browser automation via Model Context Protocol",
+  "description": "Chrome extension for AI-driven browser automation via Model Context Protocol",
   "permissions": [
     "activeTab",
     "tabs",
@@ -24,7 +24,7 @@
   ],
   "action": {
     "default_popup": "src/popup.html",
-    "default_title": "Browser MCP"
+    "default_title": "Chrome MCP"
   },
   "icons": {
     "16": "icons/icon16.png",

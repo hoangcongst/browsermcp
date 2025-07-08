@@ -1,5 +1,5 @@
 /**
- * Browser MCP Extension - Popup Script
+ * Chrome MCP Extension - Popup Script
  * 
  * Handles the extension popup interface and status display.
  */

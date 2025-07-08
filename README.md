@@ -5,15 +5,15 @@
 Chrome MCP is a Model Context Protocol (MCP) server that enables AI applications to automate and interact with web browsers. It consists of two main components:
 
 - **MCP Server**: A Node.js server that exposes browser automation tools via the MCP protocol
-- **Browser Extension**: A Chrome/Firefox extension that receives commands from the server and executes them in the browser
+- **Chrome MCP Extension**: A Chrome extension that receives commands from the server and executes them in the browser
 
 This allows AI applications like Claude, Cursor, Windsurf, and VS Code to control your browser, navigate websites, click elements, fill forms, and capture screenshots - all while using your existing browser profile and staying logged into your accounts.
 
 ## How It Works
 
 1. **AI Application** ↔ **MCP Server** (via stdio/MCP protocol)
-2. **MCP Server** ↔ **Browser Extension** (via WebSocket)
-3. **Browser Extension** ↔ **Web Pages** (via browser APIs)
+2. **MCP Server** ↔ **Chrome MCP Extension** (via WebSocket)
+3. **Chrome MCP Extension** ↔ **Web Pages** (via browser APIs)
 
 The MCP server acts as a bridge between AI applications and your browser, translating high-level AI commands into specific browser actions.
 
@@ -23,7 +23,7 @@ The MCP server acts as a bridge between AI applications and your browser, transl
 
 *   [Node.js](https://nodejs.org/) (v18 or higher)
 *   [pnpm](https://pnpm.io/)
-*   The **Chrome MCP** browser extension installed in your browser
+*   The **Chrome MCP** Chrome MCP extension installed in your browser
 *   An AI application that supports MCP (Claude Desktop, Cursor, Windsurf, etc.)
 
 ### Quick Start
@@ -35,14 +35,14 @@ cd browsermcp
 pnpm install && pnpm build && pnpm start
 ```
 
-**Important**: You also need to install the browser extension from the `extension/` folder.
+**Important**: You also need to install the Chrome MCP extension from the `extension/` folder.
 
-📖 **See [INSTALLATION.md](./INSTALLATION.md) for complete setup instructions including browser extension installation and AI application configuration.**
+📖 **See [INSTALLATION.md](./INSTALLATION.md) for complete setup instructions including Chrome MCP extension installation and AI application configuration.**
 
 Then you can run the server with:
 
 ```bash
-mcp-server-browsermcp
+mcp-server-chromemcp
 ```
 
 Alternatively, you can run it directly for development and inspection:
@@ -64,7 +64,7 @@ This will start the server and the MCP Inspector, allowing you to see requests a
 ### 2. AI-Driven Browser Automation
 1. **AI Request**: Your AI application sends a command (e.g., "click the login button")
 2. **MCP Processing**: The MCP server receives the request and identifies the appropriate tool
-3. **WebSocket Communication**: The server sends the command to the browser extension via WebSocket
+3. **WebSocket Communication**: The server sends the command to the Chrome MCP extension via WebSocket
 4. **Browser Action**: The extension executes the action in the browser (clicking, typing, navigating)
 5. **Snapshot Capture**: The extension captures the current page state (ARIA accessibility tree)
 6. **Response**: The updated page state is sent back to the AI application
