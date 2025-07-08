@@ -1,7 +1,7 @@
 {
   "servers": [
     {
-      "name": "BrowserMCP",
+      "name": "chromemcp",
       "url": "http://127.0.0.1:9002",
       "token": "e8ee5faede1c2cf0bb9736b3b172dfe92d252db452c15130260eb6595182cda3"
     }

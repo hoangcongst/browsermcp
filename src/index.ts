@@ -45,7 +45,7 @@ const resources: Resource[] = [];
 
 async function createServer(): Promise<Server> {
   return createServerWithTools({
-    name: "browsermcp",
+    name: "chromemcp",
     version: packageJSON.version,
     tools: snapshotTools,
     resources,

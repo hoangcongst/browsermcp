@@ -1,92 +1,124 @@
-## About
+# Chrome MCP: Give Your AI the Keys to Your Browser 🔑
 
-**Note:** This project is a substantial independent continuation of the original [browsermcp/mcp project](https://github.com/browsermcp/mcp). Significant changes, new features, and ongoing maintenance are by me. Attribution to the original authors is retained for reused code, per Apache 2.0 requirements.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
+[![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-green.svg)](https://developer.chrome.com/docs/extensions/)
 
-Chrome MCP is a Model Context Protocol (MCP) server that enables AI applications to automate and interact with web browsers. It consists of two main components:
+**Unleash your AI's full potential by giving it direct, secure control over your personal Chrome browser. `chromemcp` transforms your browser from a simple tool into an active, intelligent partner for any task.**
 
-- **MCP Server**: A Node.js server that exposes browser automation tools via the MCP protocol
-- **Chrome MCP Extension**: A Chrome extension that receives commands from the server and executes them in the browser
+---
 
-This allows AI applications like Claude, Cursor, Windsurf, and VS Code to control your browser, navigate websites, click elements, fill forms, and capture screenshots - all while using your existing browser profile and staying logged into your accounts.
+## 🚀 Core Philosophy: Speed and Simplicity
 
-## How It Works
+`chromemcp` is built on a simple but powerful idea: **the best tools are the ones you don't notice.** Our focus is on creating a seamless, lightweight, and incredibly fast bridge between your AI and your browser.
 
-1. **AI Application** ↔ **MCP Server** (via stdio/MCP protocol)
-2. **MCP Server** ↔ **Chrome MCP Extension** (via WebSocket)
-3. **Chrome MCP Extension** ↔ **Web Pages** (via browser APIs)
+-   **No Heavy Dependencies**: We use a minimal set of well-vetted libraries to keep the footprint small.
+-   **Instant Startup**: By hooking into your existing browser, we eliminate the slow, resource-intensive process of launching new browser instances.
+-   **Zero-Clutter Setup**: The configuration is designed to be completed in minutes, getting you from clone to command as quickly as possible.
 
-The MCP server acts as a bridge between AI applications and your browser, translating high-level AI commands into specific browser actions.
+This project is for developers who value performance and want a tool that just works, without the bloat.
 
-## Getting Started
+## The Problem: Your AI is Trapped in a Chatbox
 
-### Prerequisites
+Large Language Models are incredibly powerful, but they are fundamentally disconnected from your most important workspace: the web browser. Traditional automation tools like Playwright or Puppeteer are clunky, run in isolated environments, and constantly struggle with logins, CAPTCHAs, and bot detection. They don't know who you are.
 
-*   [Node.js](https://nodejs.org/) (v18 or higher)
-*   [pnpm](https://pnpm.io/)
-*   The **Chrome MCP** Chrome MCP extension installed in your browser
-*   An AI application that supports MCP (Claude Desktop, Cursor, Windsurf, etc.)
+## The Solution: Seamless, Context-Aware Automation
 
-### Quick Start
+`chromemcp` bridges this gap. It's a **Model Context Protocol (MCP)** server that acts as a secure bridge between any AI agent and **your own Chrome browser**. It doesn't launch a new, empty browser; it connects to the one you're already using, complete with your logins, history, and cookies.
 
-```bash
-# Clone and run from source
-git clone https://github.com/hoangcongst/browsermcp.git
-cd browsermcp
-pnpm install && pnpm build && pnpm start
-```
+This means your AI can:
+- ✅ Operate on websites that require a login.
+- ✅ Leverage your existing session data for context.
+- ✅ Avoid bot detection by using your genuine browser fingerprint.
+- ✅ Work alongside you, in your environment.
 
-**Important**: You also need to install the Chrome MCP extension from the `extension/` folder.
+## How `chromemcp` Redefines AI Interaction
 
-📖 **See [INSTALLATION.md](./INSTALLATION.md) for complete setup instructions including Chrome MCP extension installation and AI application configuration.**
+| Advantage | The Old Way (Playwright, etc.) | The `chromemcp` Way | 
+| :--- | :--- | :--- | 
+| **Integration** | ❌ Runs in a sterile, separate browser instance. | ✅ **Seamlessly integrates** with your live browser session. | 
+| **Authentication** | ❌ Constant re-logins and brittle session management. | ✅ **Stays logged in.** Uses your existing cookies and sessions. | 
+| **Privacy** | ⚠️ Can involve cloud services or complex setups. | 🔒 **100% Local and Private.** Your data never leaves your machine. | 
+| **Speed & Resources** | 🐢 Slow to start, heavy on resources. | ⚡ **Instantaneous and Lightweight.** No new browser process needed. | 
+| **Stealth** | 🤖 Easily flagged as a bot. | 🥷 **Human-like.** Uses your real browser fingerprint. | 
 
-Then you can run the server with:
+## From Zero to AI-Powered in 5 Minutes
 
-```bash
-mcp-server-chromemcp
-```
+1.  **Clone & Install**
+    ```bash
+    git clone https://github.com/hoangcongst/chromemcp.git
+    cd chromemcp
+    pnpm install && pnpm build
+    ```
 
-Alternatively, you can run it directly for development and inspection:
+2.  **Load the Extension**
+    - Go to `chrome://extensions`, enable **Developer Mode**.
+    - Click **Load unpacked** and select the `extension` folder.
 
-```bash
-pnpm run inspector
-```
+3.  **Configure Your AI Client**
+    Once the extension is loaded, you don't need to manually start the server. Your AI client will do it for you. Here’s how to set it up:
 
-This will start the server and the MCP Inspector, allowing you to see requests and responses in real-time.
+    #### For Cursor, Claude, or other `stdio`-based clients:
 
-## Workflow
+    1.  Find the absolute path to the `chromemcp` startup script. In your terminal, navigate to the project directory and run:
+        ```bash
+        # This will print the full path, e.g., /Users/you/projects/chromemcp
+        pwd
+        ```
+        The path to the script will be `/path/from/pwd/dist/index.js`.
 
-### 1. Setup and Connection
-1. Install and build the MCP server (this project)
-2. Install the Chrome MCP extension in your browser
-3. Configure your AI application to connect to the MCP server
-4. Start the MCP server
+    2.  In your AI client's settings, add a new MCP server configuration:
 
-### 2. AI-Driven Browser Automation
-1. **AI Request**: Your AI application sends a command (e.g., "click the login button")
-2. **MCP Processing**: The MCP server receives the request and identifies the appropriate tool
-3. **WebSocket Communication**: The server sends the command to the Chrome MCP extension via WebSocket
-4. **Browser Action**: The extension executes the action in the browser (clicking, typing, navigating)
-5. **Snapshot Capture**: The extension captures the current page state (ARIA accessibility tree)
-6. **Response**: The updated page state is sent back to the AI application
+        - **Name**: `ChromeMCP` (or your preferred name)
+        - **Type**: `stdio`
+        - **Command**: `node`
+        - **Arguments**: `["/path/to/your/chromemcp/dist/index.js"]`
 
-### 3. Available Actions
-- **Navigation**: Go to URLs, go back/forward
-- **Element Interaction**: Click buttons, fill forms, select dropdowns
-- **Information Gathering**: Take screenshots, get console logs, capture page snapshots
-- **Keyboard Actions**: Press keys, type text
-- **Mouse Actions**: Hover over elements, drag and drop
+    Here is an example configuration snippet:
+    ```json
+    {
+      "name": "ChromeMCP",
+      "command": "node",
+      "args": [
+        "/Users/your_username/path/to/chromemcp/dist/index.js"
+      ],
+      "type": "stdio"
+    }
+    ```
 
-## Features
+    3.  Save the configuration. Your AI client is now connected and will start the server automatically whenever you use a browser tool.
 
-- ⚡ Fast: Automation happens locally on your machine, resulting in better performance without network latency.
-- 🔒 Private: Since automation happens locally, your browser activity stays on your device and isn't sent to remote servers.
-- 👤 Logged In: Uses your existing browser profile, keeping you logged into all your services.
-- 🥷🏼 Stealth: Avoids basic bot detection and CAPTCHAs by using your real browser fingerprint.
+## The Toolkit: Your AI's Senses and Hands
 
-## Contributing
+Equip your AI with a powerful set of tools to see, understand, and interact with the web.
 
-This repo contains all the core MCP code for Chrome MCP, but currently cannot yet be built on its own due to dependencies on utils and types from the monorepo where it's developed.
+<details>
+<summary><strong>👀 Vision & Understanding</strong></summary>
 
-## Credits
+- `snapshot`: Perceive the structure and content of a webpage.
+- `screenshot`: See the visual layout of the page or specific elements.
+- `get_inner_html`: Read the raw content or text of any element.
+- `get_console_logs`: Debug by checking for errors and messages.
 
-Chrome MCP was adapted from the [Playwright MCP server](https://github.com/microsoft/playwright-mcp) in order to automate the user's browser rather than creating new browser instances. This allows using the user's existing browser profile to use logged-in sessions and avoid bot detection mechanisms that commonly block automated browser use.
+</details>
+
+<details>
+<summary><strong>🦾 Action & Interaction</strong></summary>
+
+- `click`, `hover`, `type`: Interact with any element on the page.
+- `navigate`, `go_back`, `go_forward`: Control the browser's navigation.
+- `execute_javascript`: Inject custom logic or modify the page on the fly.
+- `press_key`, `select_option`: Handle complex forms and keyboard shortcuts.
+
+</details>
+
+## Join the Revolution
+
+This is more than just a project; it's a step towards a future where AI agents are truly helpful assistants that can work with us in our digital environments. 
+
+**Contributions are highly encouraged!** Whether you want to add new tools, improve performance, or fix bugs, your input is valuable. Check out the issues or open a pull request to get started.
+
+## License
+
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+

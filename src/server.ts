@@ -32,12 +32,27 @@ export async function createServerWithTools(options: Options): Promise<Server> {
   );
 
   const wss = await createWebSocketServer();
-  wss.on("connection", (websocket) => {
+  wss.on("connection", (websocket, request) => {
+    console.log(`[Chrome MCP] New WebSocket connection from ${request.socket.remoteAddress}`);
+    
     // Close any existing connections
     if (context.hasWs()) {
+      console.log('[Chrome MCP] Closing existing WebSocket connection');
       context.ws.close();
     }
+    
+    // Set up event handlers for this connection
+    websocket.on('error', (error) => {
+      console.error('[Chrome MCP] WebSocket connection error:', error);
+    });
+    
+    websocket.on('close', (code, reason) => {
+      console.log(`[Chrome MCP] WebSocket connection closed with code ${code}, reason: ${reason || 'No reason provided'}`);
+    });
+    
+    // Store the connection in context
     context.ws = websocket;
+    console.log('[Chrome MCP] WebSocket connection established successfully');
   });
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {

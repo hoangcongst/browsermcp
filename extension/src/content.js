@@ -5,7 +5,7 @@
  * browser automation commands from AI applications.
  */
 
-class BrowserMCPClient {
+class chromemcpClient {
   constructor() {
     this.ws = null;
     this.isConnected = false;
@@ -28,6 +28,13 @@ class BrowserMCPClient {
       const wsUrl = 'ws://localhost:8080';
       console.log(`[Chrome MCP] Connecting to ${wsUrl}`);
       
+      // Close any existing connection before creating a new one
+      if (this.ws) {
+        console.log('[Chrome MCP] Closing existing connection before reconnecting');
+        this.ws.close();
+        this.ws = null;
+      }
+      
       this.ws = new WebSocket(wsUrl);
       
       this.ws.onopen = () => {
@@ -41,17 +48,24 @@ class BrowserMCPClient {
           data: {
             url: window.location.href,
             title: document.title,
-            userAgent: navigator.userAgent
+            userAgent: navigator.userAgent,
+            clientName: 'chromemcp' // Add client identifier
           }
         });
       };
       
       this.ws.onmessage = (event) => {
-        this.handleMessage(JSON.parse(event.data));
+        console.log('[Chrome MCP] Received message:', event.data.substring(0, 100) + (event.data.length > 100 ? '...' : ''));
+        try {
+          const parsedData = JSON.parse(event.data);
+          this.handleMessage(parsedData);
+        } catch (error) {
+          console.error('[Chrome MCP] Error parsing message:', error);
+        }
       };
       
-      this.ws.onclose = () => {
-        console.log('[Chrome MCP] Connection closed');
+      this.ws.onclose = (event) => {
+        console.log(`[Chrome MCP] Connection closed with code ${event.code}, reason: ${event.reason || 'No reason provided'}`);
         this.isConnected = false;
         this.attemptReconnect();
       };
@@ -67,15 +81,33 @@ class BrowserMCPClient {
   }
 
   attemptReconnect() {
+    // Clear any existing reconnection timers
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+    
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
-      console.log(`[Chrome MCP] Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+      // Exponential backoff with jitter to prevent connection storms
+      const baseDelay = this.reconnectDelay * Math.pow(1.5, this.reconnectAttempts - 1);
+      const jitter = Math.random() * 0.5 * baseDelay; // Add up to 50% jitter
+      const delay = baseDelay + jitter;
       
-      setTimeout(() => {
+      console.log(`[Chrome MCP] Reconnecting in ${Math.round(delay)}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+      
+      this.reconnectTimer = setTimeout(() => {
+        console.log('[Chrome MCP] Attempting reconnection now...');
         this.connectToServer();
-      }, this.reconnectDelay * this.reconnectAttempts);
+      }, delay);
     } else {
-      console.error('[Chrome MCP] Max reconnection attempts reached');
+      console.error('[Chrome MCP] Max reconnect attempts reached. Please check if the MCP server is running.');
+      // Reset reconnect attempts after a longer timeout to try again
+      setTimeout(() => {
+        console.log('[Chrome MCP] Resetting reconnection attempts and trying again...');
+        this.reconnectAttempts = 0;
+        this.connectToServer();
+      }, 30000); // Wait 30 seconds before trying again
     }
   }
 
@@ -475,9 +507,9 @@ class BrowserMCPClient {
 }
 
 // Initialize the Chrome MCP client
-const browserMCP = new BrowserMCPClient();
+const chromemcp = new chromemcpClient();
 
 // Export for testing
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = BrowserMCPClient;
+  module.exports = chromemcpClient;
 }

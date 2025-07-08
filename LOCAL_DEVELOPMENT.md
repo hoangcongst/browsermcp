@@ -14,8 +14,8 @@ This guide explains how to set up and run Browser MCP locally for development an
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/hoangcongst/browsermcp.git
-cd browsermcp
+git clone https://github.com/hoangcongst/chromemcp.git
+cd chromemcp
 ```
 
 ### 2. Install Dependencies
@@ -55,7 +55,7 @@ node dist/index.js
 pnpm link --global
 
 # Now you can run from anywhere
-mcp-server-browsermcp
+mcp-server-chromemcp
 ```
 
 ## Development Workflow
@@ -88,15 +88,15 @@ Add to your MCP configuration:
 ```json
 {
   "mcpServers": {
-    "browsermcp": {
+    "chromemcp": {
       "command": "node",
-      "args": ["/absolute/path/to/browsermcp/dist/index.js"]
+      "args": ["/absolute/path/to/chromemcp/dist/index.js"]
     }
   }
 }
 ```
 
-Replace `/absolute/path/to/browsermcp` with your actual project path.
+Replace `/absolute/path/to/chromemcp` with your actual project path.
 
 ### For Claude Desktop
 
@@ -105,9 +105,9 @@ Add to `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "browsermcp": {
+    "chromemcp": {
       "command": "node",
-      "args": ["/absolute/path/to/browsermcp/dist/index.js"]
+      "args": ["/absolute/path/to/chromemcp/dist/index.js"]
     }
   }
 }
@@ -125,7 +125,7 @@ Add to `claude_desktop_config.json`:
 
 ### 1. Start the Server
 ```bash
-cd /path/to/browsermcp
+cd /path/to/chromemcp
 pnpm start
 ```
 
@@ -178,7 +178,7 @@ Try commands like:
 ## File Structure
 
 ```
-browsermcp/
+chromemcp/
 ├── src/                    # Server source code (TypeScript)
 │   ├── index.ts           # Main entry point
 │   ├── server.ts          # MCP server setup
@@ -212,4 +212,4 @@ To contribute back to this fork:
 3. Test thoroughly
 4. Submit a pull request
 
-For issues or questions, use the GitHub Issues page: https://github.com/hoangcongst/browsermcp/issues
+For issues or questions, use the GitHub Issues page: https://github.com/hoangcongst/chromemcp/issues

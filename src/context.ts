@@ -2,7 +2,7 @@ import type { WebSocket } from "ws";
 
 import { createSocketMessageSender } from "./sender";
 
-const noConnectionMessage = `No connection to browser extension. In order to proceed, you must first connect a tab by clicking the Browser MCP extension icon in the browser toolbar and clicking the 'Connect' button.`;
+const noConnectionMessage = `No connection to browser extension. In order to proceed, you must first connect a tab by clicking the Chrome MCP extension icon in the browser toolbar and clicking the 'Connect' button.`;
 
 export class Context {
   private _ws: WebSocket | undefined;
