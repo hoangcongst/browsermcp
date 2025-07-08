@@ -56,7 +56,8 @@ export async function createServerWithTools(options: Options): Promise<Server> {
         // Process responses from the extension
         if (message.type && message.type.endsWith('_complete')) {
           console.log(`[Chrome MCP] Action completed: ${message.type}`);
-          // The message ID should be used to resolve the corresponding promise in the sender
+          // The message ID is handled by the sender function to resolve the corresponding promise
+          // No need to do anything here as the sender will handle the resolution
         } else if (message.type === 'heartbeat_ack') {
           console.log('[Chrome MCP] Received heartbeat acknowledgment');
         } else if (message.type === 'error') {
