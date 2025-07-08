@@ -1,0 +1,15 @@
+{
+  "servers": [
+    {
+      "name": "local",
+      "default": true,
+      "transport": {
+        "type": "stdio",
+        "command": "node",
+        "args": [
+          "/Users/hoangcongst/Docker/personal/browsermcp/dist/index.js"
+        ]
+      }
+    }
+  ]
+}

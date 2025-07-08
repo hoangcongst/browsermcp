@@ -1,10 +1,7 @@
 #!/usr/bin/env node
-import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { program } from "commander";
-
-import { appConfig } from "@repo/config/app.config";
-
 import type { Resource } from "@/resources/resource";
 import { createServerWithTools } from "@/server";
 import * as common from "@/tools/common";
@@ -24,7 +21,12 @@ function setupExitWatchdog(server: Server) {
 
 const commonTools: Tool[] = [common.pressKey, common.wait];
 
-const customTools: Tool[] = [custom.getConsoleLogs, custom.screenshot];
+const customTools: Tool[] = [
+  custom.getConsoleLogs,
+  custom.screenshot,
+  custom.executeJavaScript,
+  custom.getInnerHTML,
+];
 
 const snapshotTools: Tool[] = [
   common.navigate(true),
@@ -43,7 +45,7 @@ const resources: Resource[] = [];
 
 async function createServer(): Promise<Server> {
   return createServerWithTools({
-    name: appConfig.name,
+    name: "browsermcp",
     version: packageJSON.version,
     tools: snapshotTools,
     resources,
@@ -61,6 +63,7 @@ program
     setupExitWatchdog(server);
 
     const transport = new StdioServerTransport();
+    console.log("MCP server started - listening for connections via stdio");
     await server.connect(transport);
   });
 program.parse(process.argv);

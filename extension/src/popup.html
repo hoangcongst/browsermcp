@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 300px;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #2563eb;
+      margin-bottom: 5px;
+    }
+    .status {
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+    .status.connected {
+      background-color: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+    .status.disconnected {
+      background-color: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+    .info {
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.4;
+    }
+    .button {
+      width: 100%;
+      padding: 8px 16px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    .button:hover {
+      background-color: #1d4ed8;
+    }
+    .button:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">Browser MCP</div>
+    <div style="font-size: 12px; color: #6b7280;">AI Browser Automation</div>
+  </div>
+
+  <div id="status" class="status disconnected">
+    <strong>Status:</strong> <span id="statusText">Disconnected</span>
+  </div>
+
+  <div class="info">
+    <p><strong>Current Page:</strong></p>
+    <p id="currentUrl" style="word-break: break-all; font-size: 11px;"></p>
+    
+    <p><strong>Server:</strong> localhost:8080</p>
+    
+    <p style="margin-top: 15px;">
+      This extension connects your browser to the Browser MCP server, enabling AI applications to automate web interactions.
+    </p>
+  </div>
+
+  <button id="reconnectBtn" class="button">Reconnect to Server</button>
+
+  <script src="popup.js"></script>
+</body>
+</html>

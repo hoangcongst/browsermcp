@@ -4,17 +4,81 @@
 
 <h3 align="center">Browser MCP</h3>
 
-<p align="center">
-  Automate your browser with AI.
-  <br />
-  <a href="https://browsermcp.io"><strong>Website</strong></a> 
-  •
-  <a href="https://docs.browsermcp.io"><strong>Docs</strong></a>
-</p>
-
 ## About
 
-Browser MCP is an MCP server + Chrome extension that allows you to automate your browser using AI applications like VS Code, Claude, Cursor, and Windsurf.
+Browser MCP is a Model Context Protocol (MCP) server that enables AI applications to automate and interact with web browsers. It consists of two main components:
+
+- **MCP Server**: A Node.js server that exposes browser automation tools via the MCP protocol
+- **Browser Extension**: A Chrome/Firefox extension that receives commands from the server and executes them in the browser
+
+This allows AI applications like Claude, Cursor, Windsurf, and VS Code to control your browser, navigate websites, click elements, fill forms, and capture screenshots - all while using your existing browser profile and staying logged into your accounts.
+
+## How It Works
+
+1. **AI Application** ↔ **MCP Server** (via stdio/MCP protocol)
+2. **MCP Server** ↔ **Browser Extension** (via WebSocket)
+3. **Browser Extension** ↔ **Web Pages** (via browser APIs)
+
+The MCP server acts as a bridge between AI applications and your browser, translating high-level AI commands into specific browser actions.
+
+## Getting Started
+
+### Prerequisites
+
+*   [Node.js](https://nodejs.org/) (v18 or higher)
+*   [pnpm](https://pnpm.io/)
+*   The **Browser MCP** browser extension installed in your browser
+*   An AI application that supports MCP (Claude Desktop, Cursor, Windsurf, etc.)
+
+### Quick Start
+
+```bash
+# Clone and run from source
+git clone https://github.com/hoangcongst/browsermcp.git
+cd browsermcp
+pnpm install && pnpm build && pnpm start
+```
+
+**Important**: You also need to install the browser extension from the `extension/` folder.
+
+📖 **See [INSTALLATION.md](./INSTALLATION.md) for complete setup instructions including browser extension installation and AI application configuration.**
+
+Then you can run the server with:
+
+```bash
+mcp-server-browsermcp
+```
+
+Alternatively, you can run it directly for development and inspection:
+
+```bash
+pnpm run inspector
+```
+
+This will start the server and the MCP Inspector, allowing you to see requests and responses in real-time.
+
+## Workflow
+
+### 1. Setup and Connection
+1. Install and build the MCP server (this project)
+2. Install the Browser MCP extension in your browser
+3. Configure your AI application to connect to the MCP server
+4. Start the MCP server
+
+### 2. AI-Driven Browser Automation
+1. **AI Request**: Your AI application sends a command (e.g., "click the login button")
+2. **MCP Processing**: The MCP server receives the request and identifies the appropriate tool
+3. **WebSocket Communication**: The server sends the command to the browser extension via WebSocket
+4. **Browser Action**: The extension executes the action in the browser (clicking, typing, navigating)
+5. **Snapshot Capture**: The extension captures the current page state (ARIA accessibility tree)
+6. **Response**: The updated page state is sent back to the AI application
+
+### 3. Available Actions
+- **Navigation**: Go to URLs, go back/forward
+- **Element Interaction**: Click buttons, fill forms, select dropdowns
+- **Information Gathering**: Take screenshots, get console logs, capture page snapshots
+- **Keyboard Actions**: Press keys, type text
+- **Mouse Actions**: Hover over elements, drag and drop
 
 ## Features
 
