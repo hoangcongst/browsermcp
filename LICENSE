@@ -186,8 +186,11 @@ APPENDIX: How to apply the Apache License to your work.
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
+Portions Copyright (c) 2025 Hoang Cong
 Portions Copyright (c) Microsoft Corporation.
 Portions Copyright 2017 Google Inc.
+
+This project is a substantial independent continuation of an original fork. Significant changes, new features, and ongoing maintenance are by Hoang Cong. Attribution to original authors is retained for reused code, per Apache 2.0 requirements.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

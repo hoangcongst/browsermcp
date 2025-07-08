@@ -1,12 +1,8 @@
-<a href="https://browsermcp.io">
-  <img src="./.github/images/banner.png" alt="Browser MCP banner">
-</a>
-
-<h3 align="center">Browser MCP</h3>
-
 ## About
 
-Browser MCP is a Model Context Protocol (MCP) server that enables AI applications to automate and interact with web browsers. It consists of two main components:
+**Note:** This project is a substantial independent continuation of the original [browsermcp/mcp project](https://github.com/browsermcp/mcp). Significant changes, new features, and ongoing maintenance are by me. Attribution to the original authors is retained for reused code, per Apache 2.0 requirements.
+
+Chrome MCP is a Model Context Protocol (MCP) server that enables AI applications to automate and interact with web browsers. It consists of two main components:
 
 - **MCP Server**: A Node.js server that exposes browser automation tools via the MCP protocol
 - **Browser Extension**: A Chrome/Firefox extension that receives commands from the server and executes them in the browser
@@ -27,7 +23,7 @@ The MCP server acts as a bridge between AI applications and your browser, transl
 
 *   [Node.js](https://nodejs.org/) (v18 or higher)
 *   [pnpm](https://pnpm.io/)
-*   The **Browser MCP** browser extension installed in your browser
+*   The **Chrome MCP** browser extension installed in your browser
 *   An AI application that supports MCP (Claude Desktop, Cursor, Windsurf, etc.)
 
 ### Quick Start
@@ -61,7 +57,7 @@ This will start the server and the MCP Inspector, allowing you to see requests a
 
 ### 1. Setup and Connection
 1. Install and build the MCP server (this project)
-2. Install the Browser MCP extension in your browser
+2. Install the Chrome MCP extension in your browser
 3. Configure your AI application to connect to the MCP server
 4. Start the MCP server
 
@@ -89,8 +85,8 @@ This will start the server and the MCP Inspector, allowing you to see requests a
 
 ## Contributing
 
-This repo contains all the core MCP code for Browser MCP, but currently cannot yet be built on its own due to dependencies on utils and types from the monorepo where it's developed.
+This repo contains all the core MCP code for Chrome MCP, but currently cannot yet be built on its own due to dependencies on utils and types from the monorepo where it's developed.
 
 ## Credits
 
-Browser MCP was adapted from the [Playwright MCP server](https://github.com/microsoft/playwright-mcp) in order to automate the user's browser rather than creating new browser instances. This allows using the user's existing browser profile to use logged-in sessions and avoid bot detection mechanisms that commonly block automated browser use.
+Chrome MCP was adapted from the [Playwright MCP server](https://github.com/microsoft/playwright-mcp) in order to automate the user's browser rather than creating new browser instances. This allows using the user's existing browser profile to use logged-in sessions and avoid bot detection mechanisms that commonly block automated browser use.
