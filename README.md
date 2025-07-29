@@ -86,6 +86,17 @@ This means your AI can:
     }
     ```
 
+    or pubished version
+    ```json
+    {
+      "name": "ChromeMCP",
+      "command": "npx",
+      "args": [
+        "@hoangcongst/chromemcp"
+      ],
+      "type": "stdio"
+    }
+    ```
     3.  Save the configuration. Your AI client is now connected and will start the server automatically whenever you use a browser tool.
 
 ## The Toolkit: Your AI's Senses and Hands

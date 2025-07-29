@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm view:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm publish:*)",
+      "Bash(sudo chown:*)",
+      "Bash(npm login:*)",
+      "Bash(npx:*)"
+    ],
+    "deny": []
+  }
+}

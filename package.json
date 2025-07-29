@@ -1,6 +1,6 @@
 {
   "name": "@hoangcongst/chromemcp",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "description": "A lightweight and fast MCP server to connect AI agents to your own Chrome browser.",
   "author": "hoangcongst",
   "homepage": "https://github.com/hoangcongst/chromemcp", 
@@ -20,8 +20,9 @@
     "browser-extension"
   ],
   "type": "module",
+  "main": "dist/index.js",
   "bin": {
-    "mcp-server-chromemcp": "dist/index.js"
+    "chromemcp": "dist/index.js"
   },
   "files": [
     "dist"
