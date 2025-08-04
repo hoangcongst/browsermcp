@@ -9,7 +9,7 @@ export const createSocketMessageSender = (ws: WebSocket) => {
       const id = crypto.randomUUID();
       const message = JSON.stringify({ id, type, data });
       
-      console.log(`[Chrome MCP] Sending message: ${type} (ID: ${id.substring(0, 8)}...)`);
+      console.error(`[Chrome MCP] Sending message: ${type} (ID: ${id.substring(0, 8)}...)`);
       
       // Set a timeout to prevent hanging indefinitely
       const timeoutMs = 30000; // 30 seconds
@@ -29,7 +29,7 @@ export const createSocketMessageSender = (ws: WebSocket) => {
             clearTimeout(timeoutId);
             ws.off("message", handleMessage);
             
-            console.log(`[Chrome MCP] Received response for message: ${type} (ID: ${id.substring(0, 8)}...)`);
+            console.error(`[Chrome MCP] Received response for message: ${type} (ID: ${id.substring(0, 8)}...)`);
             
             // Mark the action as completed
             lastActionCompleted = true;

@@ -62,7 +62,7 @@ program
     setupExitWatchdog(server);
 
     const transport = new StdioServerTransport();
-    console.log("MCP server started - listening for connections via stdio");
+    console.error("[Chrome MCP] MCP server started - listening for connections via stdio");
     await server.connect(transport);
   });
 program.parse(process.argv);
